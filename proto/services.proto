@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package proto;
+
+// trick to don't show deprecated message of go-rpc_out:
+// $: protoc --go_out=. services.proto
+option go_package = "../proto";
+
+message LoginRequest {
+  string Login = 1;
+  string Password = 2;
+}
+
+message AuthResponse {
+  string Token  = 1;
+}
+
+service AuthService {
+  rpc Login(LoginRequest) returns (AuthResponse);
+}
+
