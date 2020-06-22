@@ -28,3 +28,17 @@ func connectToDB() {
 func NewDBContext(d time.Duration) (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), d*performance/100)
 }
+
+// ConnectToTestDB overwrites DB with Test Database
+func ConnectToTestDB() {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(dbUri))
+
+	if err != nil {
+		log.Fatal("Error connect to DB: ", err.Error())
+	}
+
+	DB = *client.Database(dbName + "_test")
+}
