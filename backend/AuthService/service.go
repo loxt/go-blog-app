@@ -46,7 +46,7 @@ func (authServer) Signup(_ context.Context, in *proto.SignupRequest) (*proto.Aut
 
 	if len(username) < 4 || len(username) > 20 ||
 		len(email) < 7 || len(email) > 65 ||
-		len(password) < 8 || len(password) < 128 ||
+		len(password) < 8 || len(password) > 128 ||
 		!match {
 		return &proto.AuthResponse{}, errors.New("validation failed")
 	}
