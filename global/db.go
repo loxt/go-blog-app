@@ -2,6 +2,7 @@ package global
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -12,7 +13,7 @@ import (
 var DB mongo.Database
 
 func connectToDB() {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := NewDBContext(10 * time.Second)
 	defer cancel()
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(dbUri))
@@ -31,7 +32,7 @@ func NewDBContext(d time.Duration) (context.Context, context.CancelFunc) {
 
 // ConnectToTestDB overwrites DB with Test Database
 func ConnectToTestDB() {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := NewDBContext(10 * time.Second)
 	defer cancel()
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(dbUri))
@@ -41,4 +42,13 @@ func ConnectToTestDB() {
 	}
 
 	DB = *client.Database(dbName + "_test")
+	ctx, cancel = NewDBContext(30 * time.Second)
+
+	defer cancel()
+	collections, _ := DB.ListCollectionNames(ctx, bson.M{})
+
+	for _, collection := range collections {
+		ctx, cancel = NewDBContext(10 * time.Second)
+		DB.Collection(collection).Drop(ctx)
+	}
 }

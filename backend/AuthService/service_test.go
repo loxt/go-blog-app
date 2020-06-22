@@ -66,3 +66,28 @@ func Test_authServer_UsernameUsed(t *testing.T) {
 		t.Error("2: wrong result")
 	}
 }
+
+func Test_authServer_EmailUsed(t *testing.T) {
+	global.ConnectToTestDB()
+	global.DB.Collection("user").
+		InsertOne(context.Background(), global.User{Email: "carl@gmail.com"})
+	server := authServer{}
+	res, err := server.EmailUsed(context.Background(), &proto.EmailUsedRequest{Email: "carlo@gmail.com"})
+
+	if err != nil {
+		t.Error("1: an error was returned: ", err.Error())
+	}
+
+	if res.GetUsed() {
+		t.Error("1: wrong result")
+	}
+
+	res, err = server.EmailUsed(context.Background(), &proto.EmailUsedRequest{Email: "carl@gmail.com"})
+	if err != nil {
+		t.Error("2: an error was returned: ", err.Error())
+	}
+
+	if !res.GetUsed() {
+		t.Error("2: wrong result")
+	}
+}

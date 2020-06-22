@@ -62,7 +62,13 @@ func (authServer) UsernameUsed(_ context.Context, in *proto.UsernameUsedRequest)
 }
 
 func (authServer) EmailUsed(_ context.Context, in *proto.EmailUsedRequest) (*proto.UsedResponse, error) {
-	return &proto.UsedResponse{}, nil
+	email := in.GetEmail()
+	ctx, cancel := global.NewDBContext(5 * time.Second)
+	defer cancel()
+
+	var result global.User
+	global.DB.Collection("user").FindOne(ctx, bson.M{"email": email}).Decode(&result)
+	return &proto.UsedResponse{Used: result != global.NilUser}, nil
 }
 
 func main() {
