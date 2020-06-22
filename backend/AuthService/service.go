@@ -116,6 +116,16 @@ func (authServer) EmailUsed(_ context.Context, in *proto.EmailUsedRequest) (*pro
 	return &proto.UsedResponse{Used: result != global.NilUser}, nil
 }
 
+func (authServer) AuthUser(_ context.Context, in *proto.AuthUserRequest) (*proto.AuthUserResponse, error) {
+	token := in.GetToken()
+	user := global.UserFromToken(token)
+	return &proto.AuthUserResponse{
+		ID:       user.ID.Hex(),
+		Username: user.Username,
+		Email:    user.Email,
+	}, nil
+}
+
 func main() {
 	server := grpc.NewServer()
 	proto.RegisterAuthServiceServer(server, authServer{})
