@@ -41,3 +41,28 @@ func Test_authServer_Login(t *testing.T) {
 		t.Error("3: an error was returned: ", err.Error())
 	}
 }
+
+func Test_authServer_UsernameUsed(t *testing.T) {
+	global.ConnectToTestDB()
+	global.DB.Collection("user").
+		InsertOne(context.Background(), global.User{Username: "Carl"})
+	server := authServer{}
+	res, err := server.UsernameUsed(context.Background(), &proto.UsernameUsedRequest{Username: "Carlo"})
+
+	if err != nil {
+		t.Error("1: an error was returned: ", err.Error())
+	}
+
+	if res.GetUsed() {
+		t.Error("1: wrong result")
+	}
+
+	res, err = server.UsernameUsed(context.Background(), &proto.UsernameUsedRequest{Username: "Carl"})
+	if err != nil {
+		t.Error("2: an error was returned: ", err.Error())
+	}
+
+	if !res.GetUsed() {
+		t.Error("2: wrong result")
+	}
+}
