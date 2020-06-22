@@ -41,3 +41,104 @@ func Test_authServer_Login(t *testing.T) {
 		t.Error("3: an error was returned: ", err.Error())
 	}
 }
+
+func Test_authServer_UsernameUsed(t *testing.T) {
+	global.ConnectToTestDB()
+	global.DB.Collection("user").
+		InsertOne(context.Background(), global.User{Username: "Carl"})
+	server := authServer{}
+	res, err := server.UsernameUsed(context.Background(), &proto.UsernameUsedRequest{Username: "Carlo"})
+
+	if err != nil {
+		t.Error("1: an error was returned: ", err.Error())
+	}
+
+	if res.GetUsed() {
+		t.Error("1: wrong result")
+	}
+
+	res, err = server.UsernameUsed(context.Background(), &proto.UsernameUsedRequest{Username: "Carl"})
+	if err != nil {
+		t.Error("2: an error was returned: ", err.Error())
+	}
+
+	if !res.GetUsed() {
+		t.Error("2: wrong result")
+	}
+}
+
+func Test_authServer_EmailUsed(t *testing.T) {
+	global.ConnectToTestDB()
+	global.DB.Collection("user").
+		InsertOne(context.Background(), global.User{Email: "carl@gmail.com"})
+	server := authServer{}
+	res, err := server.EmailUsed(context.Background(), &proto.EmailUsedRequest{Email: "carlo@gmail.com"})
+
+	if err != nil {
+		t.Error("1: an error was returned: ", err.Error())
+	}
+
+	if res.GetUsed() {
+		t.Error("1: wrong result")
+	}
+
+	res, err = server.EmailUsed(context.Background(), &proto.EmailUsedRequest{Email: "carl@gmail.com"})
+	if err != nil {
+		t.Error("2: an error was returned: ", err.Error())
+	}
+
+	if !res.GetUsed() {
+		t.Error("2: wrong result")
+	}
+}
+
+func Test_authServer_Signup(t *testing.T) {
+	global.ConnectToTestDB()
+	global.DB.Collection("user").
+		InsertOne(context.Background(), global.User{
+			Username: "carl",
+			Email:    "carl@gmail.com",
+		})
+
+	server := authServer{}
+	_, err := server.Signup(context.Background(), &proto.SignupRequest{
+		Username: "carl",
+		Email:    "example@gmail.com",
+		Password: "examplestring",
+	})
+
+	if err.Error() != "username is already used" {
+		t.Error("1: No or the wrong Error was returned")
+	}
+
+	_, err = server.Signup(context.Background(), &proto.SignupRequest{
+		Username: "example",
+		Email:    "carl@gmail.com",
+		Password: "examplestring",
+	})
+
+	if err.Error() != "email is already used" {
+		t.Error("2: No or the wrong Error was returned")
+	}
+
+	_, err = server.Signup(context.Background(), &proto.SignupRequest{
+		Username: "example",
+		Email:    "example@gmail.com",
+		Password: "examplestring",
+	})
+
+	if err != nil {
+		t.Error("3: An error was returned")
+	}
+
+	_, err = server.Signup(context.Background(), &proto.SignupRequest{
+		Username: "example",
+		Email:    "example@gmail.com",
+		Password: "exam",
+	})
+
+	if err.Error() != "validation failed" {
+		t.Error("4: No or the wrong Error was returned\"")
+	}
+
+}

@@ -19,7 +19,21 @@ message SignupRequest {
   string Password = 3;
 }
 
+message UsernameUsedRequest {
+  string Username = 1;
+}
+
+message EmailUsedRequest {
+  string Email = 1;
+}
+
+message UsedResponse {
+  bool Used = 1;
+}
+
 service AuthService {
   rpc Login(LoginRequest) returns (AuthResponse);
   rpc Signup(SignupRequest) returns (AuthResponse);
+  rpc UsernameUsed(UsernameUsedRequest) returns (UsedResponse);
+  rpc EmailUsed(EmailUsedRequest) returns (UsedResponse);
 }
