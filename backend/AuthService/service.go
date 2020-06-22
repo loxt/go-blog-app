@@ -19,18 +19,6 @@ func (s authServer) Signup(ctx context.Context, request *proto.SignupRequest) (*
 	panic("implement me")
 }
 
-func (s authServer) UsernameUsed(ctx context.Context, request *proto.UsernameUsedRequest) (*proto.UsedResponse, error) {
-	panic("implement me")
-}
-
-func (s authServer) EmailUsed(ctx context.Context, request *proto.EmailUsedRequest) (*proto.UsedResponse, error) {
-	panic("implement me")
-}
-
-func (s authServer) AuthUser(ctx context.Context, request *proto.AuthUserRequest) (*proto.AuthUserResponse, error) {
-	panic("implement me")
-}
-
 func (authServer) Login(_ context.Context, in *proto.LoginRequest) (*proto.AuthResponse, error) {
 	login, password := in.GetLogin(), in.GetPassword()
 	ctx, cancel := global.NewDBContext(5 * time.Second)
