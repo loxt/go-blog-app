@@ -138,7 +138,23 @@ func Test_authServer_Signup(t *testing.T) {
 	})
 
 	if err.Error() != "validation failed" {
-		t.Error("4: No or the wrong Error was returned\"")
+		t.Error("4: No or the wrong Error was returned")
+	}
+}
+
+func Test_authServer_AuthUser(t *testing.T) {
+	server := authServer{}
+	res, err := server.AuthUser(context.Background(), &proto.AuthUserRequest{
+		Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoie1wiSURcIjpcIjVlZjA0NGRkNGEyOGNjMzA2ZDMzYTU5ZlwiLFwiVXNlcm5hbWVcIjpcIkNhcmxcIixcIkVtYWlsXCI6XCJ0ZXN0QGdtYWlsLmNvbVwiLFwiUGFzc3dvcmRcIjpcIiQyYSQxMCQ2ekw2bU1JTXY0OGJLdVF6Wm9EczVPcVNlRVR3blk1dG1mS1c4NzMyU0YudzNHUHZvSXowT1wifSJ9.EvoL45EPdGRFsWLDRDTDC4HyVV8Oe2h6QvFh3o5HBhc",
+	})
+
+	if err != nil {
+		t.Error("an error was returned")
 	}
 
+	if res.GetID() != "5ef044dd4a28cc306d33a59f" ||
+		res.GetUsername() != "Carl" ||
+		res.GetEmail() != "test@gmail.com" {
+		t.Error("wrong result returned: ", res)
+	}
 }
