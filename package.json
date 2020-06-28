@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "@improbable-eng/grpc-web": "^0.12.0"
-  }
-}

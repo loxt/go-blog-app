@@ -19,6 +19,7 @@
     "@angular/platform-browser": "~10.0.0",
     "@angular/platform-browser-dynamic": "~10.0.0",
     "@angular/router": "~10.0.0",
+    "@improbable-eng/grpc-web": "^0.12.0",
     "@types/google-protobuf": "^3.7.2",
     "google-protobuf": "^3.12.2",
     "grpc-web-client": "^0.7.0",
