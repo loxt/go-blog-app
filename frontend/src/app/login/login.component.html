@@ -3,10 +3,20 @@
 
   <form>
     <label for="username">Username</label>
-    <input id="username" type="text" placeholder="Your username or e-mail" />
+    <input
+      (change)="change($event, 'login')"
+      id="username"
+      type="text"
+      placeholder="Your username or e-mail"
+    />
 
     <label for="password">Password</label>
-    <input id="password" type="password" placeholder="Your password" />
+    <input
+      (change)="change($event, 'password')"
+      id="password"
+      type="password"
+      placeholder="Your password"
+    />
 
     <button type="submit" (click)="onSubmit($event)">Send</button>
   </form>
