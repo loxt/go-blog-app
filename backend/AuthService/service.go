@@ -141,7 +141,7 @@ func main() {
 	grpcWebServer := grpcweb.WrapServer(server)
 
 	httpServer := &http.Server{
-		Addr: ":8080",
+		Addr: ":6000",
 		Handler: h2c.NewHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.ProtoMajor == 2 {
 				grpcWebServer.ServeHTTP(w, r)
