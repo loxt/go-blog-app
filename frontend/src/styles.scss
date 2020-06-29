@@ -5,3 +5,49 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+.authentication {
+  margin: 20px auto;
+  padding: 30px;
+  background: #e8e8e8;
+  width: 95%;
+  max-width: 400px;
+  border-radius: 12px;
+
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+
+    input {
+      padding: 5px;
+      margin: 10px 0;
+      border-radius: 4px;
+      border: none;
+
+      &:focus {
+        outline: none;
+        border: 2px solid rgba(25, 174, 255, 0.4);
+      }
+    }
+
+    button,
+    button:visited,
+    button:link {
+      cursor: pointer;
+      outline: none;
+      padding: 10px;
+      border-radius: 4px;
+      border: none;
+      margin: 10px 0;
+
+      color: #fff;
+      font-weight: bold;
+      font-size: 14px;
+      background-color: rgba(25, 174, 255, 0.6);
+    }
+  }
+}
