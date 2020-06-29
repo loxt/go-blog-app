@@ -10,6 +10,11 @@
       placeholder="Your username or e-mail"
     />
 
+    <p *ngIf="!valid.username" class="error">
+      Username can consist of letters and numbers only and the minimum length is
+      5!
+    </p>
+
     <label for="email">Email</label>
     <input
       (change)="change($event, 'email')"
@@ -17,6 +22,10 @@
       type="email"
       placeholder="Your email"
     />
+
+    <p *ngIf="!valid.email" class="error">
+      Your e-mail is not valid
+    </p>
 
     <label for="password">Password</label>
     <input
@@ -34,8 +43,8 @@
       placeholder="Confirm your password"
     />
 
-    <p *ngIf="confirmPassword != password" class="password-error">
-      Passwords don't match
+    <p *ngIf="!valid.password" class="error">
+      Passwords are different or shorter than 5 characters
     </p>
 
     <button type="submit" (click)="onSubmit($event)">Send</button>
