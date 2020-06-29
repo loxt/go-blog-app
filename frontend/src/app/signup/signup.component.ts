@@ -65,10 +65,10 @@ export class SignupComponent implements OnInit {
     e.preventDefault();
 
     if (
-      this.username === '' ||
-      this.email === '' ||
-      this.password === '' ||
-      this.confirmPassword === ''
+      this.username.length === 0 ||
+      this.email.length === 0 ||
+      this.password.length === 0 ||
+      this.confirmPassword.length === 0
     ) {
       this.error = 'Fill in the empty fields';
     } else if (this.valid.username && this.valid.email && this.valid.password) {
