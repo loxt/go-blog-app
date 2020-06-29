@@ -10,6 +10,7 @@ import { AuthUserRequest, LoginRequest } from '../../../proto/services_pb';
 export class LoginComponent implements OnInit {
   username: string = '';
   password: string = '';
+  error: string = null;
 
   constructor() {}
 
@@ -22,14 +23,14 @@ export class LoginComponent implements OnInit {
     req.setLogin(this.username);
     req.setPassword(this.password);
     authClient.login(req, {}, (err, res) => {
-      if (err) return alert(err.message);
+      if (err) return (this.error = err.message);
 
       localStorage.setItem('token', res.getToken());
       const req = new AuthUserRequest();
       req.setToken(res.getToken());
 
       authClient.authUser(req, {}, (err, res) => {
-        if (err) return alert(err.message);
+        if (err) return (this.error = err.message);
 
         const user = {
           id: res.getId(),
@@ -42,6 +43,7 @@ export class LoginComponent implements OnInit {
   }
 
   onKey(e: any, type: string) {
+    this.error = null;
     if (type === 'username') {
       this.username = e.target.value;
     } else if (type === 'password') {

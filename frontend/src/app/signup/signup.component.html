@@ -48,4 +48,7 @@
     </p>
     <button type="button" (click)="onSubmit($event)">Send</button>
   </form>
+  <p *ngIf="error != null" class="error">
+    Fill in the empty fields
+  </p>
 </div>

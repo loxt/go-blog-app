@@ -15,6 +15,7 @@ export class SignupComponent implements OnInit {
     password: true,
     email: true,
   };
+  error: string = null;
 
   constructor() {}
 
@@ -46,6 +47,7 @@ export class SignupComponent implements OnInit {
   }
 
   onKey(e: any, type: string) {
+    this.error = null;
     if (type === 'username') {
       this.username = e.target.value;
     } else if (type === 'email') {
@@ -68,9 +70,9 @@ export class SignupComponent implements OnInit {
       this.password === '' ||
       this.confirmPassword === ''
     ) {
-      console.log('campos em branco');
+      this.error = 'Fill in the empty fields';
     } else if (this.valid.username && this.valid.email && this.valid.password) {
-      console.log('Sucesso');
+      this.error = 'Account created!';
     }
   }
 }
