@@ -8,7 +8,7 @@ import { AuthUserRequest, LoginRequest } from '../../../proto/services_pb';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
-  login: string = '';
+  username: string = '';
   password: string = '';
 
   constructor() {}
@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
     e.preventDefault();
     const authClient = new AuthServiceClient('http://localhost:9001');
     const req = new LoginRequest();
-    req.setLogin(this.login);
+    req.setLogin(this.username);
     req.setPassword(this.password);
     authClient.login(req, {}, (err, res) => {
       if (err) return alert(err.message);
@@ -42,8 +42,8 @@ export class LoginComponent implements OnInit {
   }
 
   change(e: any, type: string) {
-    if (type === 'login') {
-      this.login = e.target.value;
+    if (type === 'username') {
+      this.username = e.target.value;
     } else if (type === 'password') {
       this.password = e.target.value;
     }
