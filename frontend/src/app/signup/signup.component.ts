@@ -25,15 +25,19 @@ export class SignupComponent implements OnInit {
     const emailPattern = /\S+@\S+\.\S+/;
 
     if (type === 'username') {
-      if (this.username.length < 5) {
+      if (this.username.length < 5 || this.username.length > 20) {
         this.valid.username = false;
       } else {
         this.valid.username = usernamePattern.test(this.username);
       }
     } else if (type === 'email') {
-      this.valid.email = emailPattern.test(this.email);
+      if (this.email.length < 7 || this.email.length > 65) {
+        this.valid.email = false;
+      } else {
+        this.valid.email = emailPattern.test(this.email);
+      }
     } else if (type === ('confirmPassword' || 'password')) {
-      if (this.password.length < 5) {
+      if (this.password.length < 8 || this.password.length > 128) {
         this.valid.password = false;
       } else {
         this.valid.password = this.password === this.confirmPassword;
