@@ -62,8 +62,15 @@ export class SignupComponent implements OnInit {
   onSubmit(e: Event) {
     e.preventDefault();
 
-    if (this.valid.username && this.valid.email && this.valid.password) {
-      alert('Your account has been created!');
+    if (
+      this.username === '' ||
+      this.email === '' ||
+      this.password === '' ||
+      this.confirmPassword === ''
+    ) {
+      console.log('campos em branco');
+    } else if (this.valid.username && this.valid.email && this.valid.password) {
+      console.log('Sucesso');
     }
   }
 }

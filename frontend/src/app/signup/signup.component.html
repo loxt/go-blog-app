@@ -4,10 +4,10 @@
   <form>
     <label for="username">Username</label>
     <input
-      (keyup)="onKey($event, 'username')"
       id="username"
       type="text"
       placeholder="Your username or e-mail"
+      (keyup)="onKey($event, 'username')"
     />
 
     <p *ngIf="!valid.username" class="error">
@@ -17,10 +17,10 @@
 
     <label for="email">Email</label>
     <input
-      (keyup)="onKey($event, 'email')"
       id="email"
-      type="email"
+      type="text"
       placeholder="Your email"
+      (keyup)="onKey($event, 'email')"
     />
 
     <p *ngIf="!valid.email" class="error">
@@ -29,24 +29,23 @@
 
     <label for="password">Password</label>
     <input
-      (keyup)="onKey($event, 'password')"
       id="password"
       type="password"
       placeholder="Your password"
+      (keyup)="onKey($event, 'password')"
     />
 
     <label for="confirmPassword">Confirm password</label>
     <input
-      (keyup)="onKey($event, 'confirmPassword')"
       id="confirmPassword"
       type="password"
       placeholder="Confirm your password"
+      (keyup)="onKey($event, 'confirmPassword')"
     />
 
     <p *ngIf="!valid.password" class="error">
-      Passwords are different or shorter than 5 characters
+      Passwords are different or shorter than 8 characters
     </p>
-
-    <button type="submit" (click)="onSubmit($event)">Send</button>
+    <button type="button" (click)="onSubmit($event)">Send</button>
   </form>
 </div>
