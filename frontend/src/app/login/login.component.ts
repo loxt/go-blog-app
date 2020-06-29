@@ -16,6 +16,15 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  onKey(e: any, type: string) {
+    this.error = null;
+    if (type === 'username') {
+      this.username = e.target.value;
+    } else if (type === 'password') {
+      this.password = e.target.value;
+    }
+  }
+
   onSubmit(e: Event) {
     e.preventDefault();
     const authClient = new AuthServiceClient('http://localhost:9001');
@@ -40,14 +49,5 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('user', JSON.stringify(user));
       });
     });
-  }
-
-  onKey(e: any, type: string) {
-    this.error = null;
-    if (type === 'username') {
-      this.username = e.target.value;
-    } else if (type === 'password') {
-      this.password = e.target.value;
-    }
   }
 }

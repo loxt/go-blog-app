@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthUserRequest, SignupRequest } from '../../../proto/services_pb';
+import { AuthServiceClient } from '../../../proto/services_grpc_web_pb';
 
 @Component({
   selector: 'app-signup',
@@ -72,7 +74,32 @@ export class SignupComponent implements OnInit {
     ) {
       this.error = 'Fill in the empty fields';
     } else if (this.valid.username && this.valid.email && this.valid.password) {
-      this.error = 'Account created!';
+      const authClient = new AuthServiceClient('http://localhost:9001');
+
+      const req = new SignupRequest();
+      req.setUsername(this.username);
+
+      req.setEmail(this.email);
+      req.setPassword(this.password);
+
+      authClient.signup(req, {}, (err, res) => {
+        if (err) return (this.error = err.message);
+        localStorage.setItem('token', res.getToken());
+        const authReq = new AuthUserRequest();
+        authReq.setToken(res.getToken());
+        authClient.authUser(authReq, {}, (err, res) => {
+          if (err) return (this.error = err.message);
+
+          const user = {
+            id: res.getId(),
+            username: res.getUsername(),
+            email: res.getEmail(),
+          };
+          localStorage.setItem('user', JSON.stringify(user));
+        });
+
+        this.error = 'Account created!';
+      });
     }
   }
 }
