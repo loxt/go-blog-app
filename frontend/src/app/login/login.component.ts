@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  change(e: any, type: string) {
+  onKey(e: any, type: string) {
     if (type === 'username') {
       this.username = e.target.value;
     } else if (type === 'password') {

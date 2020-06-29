@@ -4,7 +4,7 @@
   <form>
     <label for="username">Username</label>
     <input
-      (change)="change($event, 'username')"
+      (keyup)="onKey($event, 'username')"
       id="username"
       type="text"
       placeholder="Your username or e-mail"
@@ -12,7 +12,7 @@
 
     <label for="password">Password</label>
     <input
-      (change)="change($event, 'password')"
+      (keyup)="onKey($event, 'password')"
       id="password"
       type="password"
       placeholder="Your password"
