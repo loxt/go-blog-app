@@ -1,1 +1,23 @@
-<p>home works!</p>
+<div class="authentication">
+  Welcome to GoBlog!
+  <div class="home">
+    <div *ngIf="user">
+      <h1>Join with us</h1>
+      <button routerLink="/login" type="button">
+        Login
+      </button>
+      <button routerLink="/signup" type="button">
+        I need an account
+      </button>
+    </div>
+    <div *ngIf="!user">
+      <h1>You isn't connected</h1>
+      <button routerLink="/login" type="button">
+        I have an account
+      </button>
+      <button routerLink="/signup" type="button">
+        Register
+      </button>
+    </div>
+  </div>
+</div>
