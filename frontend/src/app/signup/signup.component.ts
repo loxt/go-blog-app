@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthUserRequest, SignupRequest } from '../../../proto/services_pb';
+import {
+  AuthUserRequest,
+  SignupRequest,
+  EmailUsedRequest,
+  UsernameUsedRequest,
+} from '../../../proto/services_pb';
 import { AuthServiceClient } from '../../../proto/services_grpc_web_pb';
 
 @Component({
@@ -8,6 +13,7 @@ import { AuthServiceClient } from '../../../proto/services_grpc_web_pb';
   styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent implements OnInit {
+  authClient = new AuthServiceClient('http://localhost:9001');
   username: string = '';
   email: string = '';
   password: string = '';
@@ -17,6 +23,7 @@ export class SignupComponent implements OnInit {
     password: true,
     email: true,
   };
+
   error: string = null;
 
   constructor() {}
@@ -62,10 +69,8 @@ export class SignupComponent implements OnInit {
 
     this.validate(type);
   }
-
   onSubmit(e: Event) {
     e.preventDefault();
-
     if (
       this.username.length === 0 ||
       this.email.length === 0 ||
@@ -74,32 +79,56 @@ export class SignupComponent implements OnInit {
     ) {
       this.error = 'Fill in the empty fields';
     } else if (this.valid.username && this.valid.email && this.valid.password) {
-      const authClient = new AuthServiceClient('http://localhost:9001');
+      if (this.checkIfIsUsed() === false) {
+        const req = new SignupRequest();
+        req.setUsername(this.username);
 
-      const req = new SignupRequest();
-      req.setUsername(this.username);
+        req.setEmail(this.email);
+        req.setPassword(this.password);
 
-      req.setEmail(this.email);
-      req.setPassword(this.password);
-
-      authClient.signup(req, {}, (err, res) => {
-        if (err) return (this.error = err.message);
-        localStorage.setItem('token', res.getToken());
-        const authReq = new AuthUserRequest();
-        authReq.setToken(res.getToken());
-        authClient.authUser(authReq, {}, (err, res) => {
+        this.authClient.signup(req, {}, (err, res) => {
           if (err) return (this.error = err.message);
+          localStorage.setItem('token', res.getToken());
+          const authReq = new AuthUserRequest();
+          authReq.setToken(res.getToken());
+          this.authClient.authUser(authReq, {}, (err, res) => {
+            if (err) return (this.error = err.message);
 
-          const user = {
-            id: res.getId(),
-            username: res.getUsername(),
-            email: res.getEmail(),
-          };
-          localStorage.setItem('user', JSON.stringify(user));
+            const user = {
+              id: res.getId(),
+              username: res.getUsername(),
+              email: res.getEmail(),
+            };
+            localStorage.setItem('user', JSON.stringify(user));
+          });
+
+          this.error = 'Account created!';
         });
-
-        this.error = 'Account created!';
-      });
+      }
     }
+  }
+
+  checkIfIsUsed(): boolean {
+    const req = new UsernameUsedRequest();
+    const req2 = new EmailUsedRequest();
+    req.setUsername(this.username);
+    this.authClient.usernameUsed(req, {}, (err, res) => {
+      if (err) return (this.error = err.message);
+      if (res.getUsed()) {
+        this.error = 'This username is already in use. Please choose another.';
+        return true;
+      }
+    });
+    req2.setEmail(this.email);
+
+    this.authClient.emailUsed(req2, {}, (err, res) => {
+      if (err) return (this.error = err.message);
+      if (res.getUsed()) {
+        this.error = 'This e-mail is already in use. Please choose another.';
+        return true;
+      }
+    });
+
+    return false;
   }
 }

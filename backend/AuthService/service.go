@@ -8,6 +8,7 @@ import (
 	"github.com/loxt/go-blog-app/proto"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -21,13 +22,15 @@ import (
 
 type authServer struct{}
 
+var userCollection mongo.Collection
+
 func (authServer) Login(_ context.Context, in *proto.LoginRequest) (*proto.AuthResponse, error) {
 	login, password := in.GetLogin(), in.GetPassword()
 	ctx, cancel := global.NewDBContext(5 * time.Second)
 	defer cancel()
 
 	var user global.User
-	global.DB.Collection("user").
+	userCollection.
 		FindOne(ctx, bson.M{"$or": []bson.M{{"username": login}, {"email": login}}}).Decode(&user)
 
 	if user == global.NilUser {
@@ -88,7 +91,7 @@ func (server authServer) Signup(_ context.Context, in *proto.SignupRequest) (*pr
 	ctx, cancel := global.NewDBContext(5 * time.Second)
 	defer cancel()
 
-	_, err = global.DB.Collection("user").InsertOne(ctx, newUser)
+	_, err = userCollection.InsertOne(ctx, newUser)
 
 	if err != nil {
 		log.Println("Error inserting newUser: ", err.Error())
@@ -104,7 +107,7 @@ func (authServer) UsernameUsed(_ context.Context, in *proto.UsernameUsedRequest)
 	defer cancel()
 
 	var result global.User
-	global.DB.Collection("user").FindOne(ctx, bson.M{"username": username}).Decode(&result)
+	userCollection.FindOne(ctx, bson.M{"username": username}).Decode(&result)
 	return &proto.UsedResponse{Used: result != global.NilUser}, nil
 }
 
@@ -114,7 +117,7 @@ func (authServer) EmailUsed(_ context.Context, in *proto.EmailUsedRequest) (*pro
 	defer cancel()
 
 	var result global.User
-	global.DB.Collection("user").FindOne(ctx, bson.M{"email": email}).Decode(&result)
+	userCollection.FindOne(ctx, bson.M{"email": email}).Decode(&result)
 	return &proto.UsedResponse{Used: result != global.NilUser}, nil
 }
 
@@ -129,6 +132,8 @@ func (authServer) AuthUser(_ context.Context, in *proto.AuthUserRequest) (*proto
 }
 
 func main() {
+	userCollection = *global.DB.Collection("user")
+
 	server := grpc.NewServer()
 	proto.RegisterAuthServiceServer(server, authServer{})
 	listener, err := net.Listen("tcp", ":8080")
